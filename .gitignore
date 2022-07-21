@@ -1,0 +1,16 @@
+node_modules
+keys
+
+# build folders
+dist
+build
+
+# remix files
+.deps
+src/.deps
+
+artifacts
+src/artifacts
+
+src/**/artifacts
+
