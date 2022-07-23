@@ -1,8 +1,2 @@
-module.exports = [
-    "0xf1a06b932cF0339B87D52e0c6D0A3FCFea323B13",
-    "0xC880cB7CB468e9844F4cA015dFb79D56Cff0cD6A",
-    "0xE0F3fb7Dd6b4238362f197aF8C9A71700538764E",
-    1000000000,
-    20507184,
-    3000
-];
+// This is file used for verification using "npx hardhat verify"
+module.exports = [];

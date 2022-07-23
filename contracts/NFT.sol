@@ -1,28 +1,34 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity >=0.6.0 <0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-contract NFT is ERC721URIStorage, Ownable, Pausable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+contract NFT is ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
+    using CountersUpgradeable for CountersUpgradeable.Counter;
+    CountersUpgradeable.Counter private _tokenIds;
 
     uint256 public maxSupply = 1000000;
-    uint256 public totalSupply = 0;
     uint256 public mintFee = 0;
-    uint256 public cappedSupply;
-    constructor(string memory _name, string memory _symbol, uint256 _cappedSupply) ERC721(_name, _symbol) {
+    uint256 public cappedSupply; // limit of each wallet's nft count
+    address public beneficiary; // the wallet which will receive the minting fee
+
+    //properties
+
+    function initialize(string memory _name, string memory _symbol, uint256 _cappedSupply, address _beneficiary) public initializer {
+        __ERC721_init(_name, _symbol);
         require(_cappedSupply > 0, "Invalid max supply");
+        require(beneficiary != address(0), "Invalid beneficiary");
         cappedSupply = _cappedSupply;
+        beneficiary = _beneficiary;
         _pause();
     }
 
     function updateMaxSupply(uint256 _maxSupply) external onlyOwner{
-        require(_maxSupply > 0 && _maxSupply >= totalSupply, "Invalid max supply");
+        require(_maxSupply > 0 && _maxSupply >= totalSupply(), "Invalid max supply");
         maxSupply = _maxSupply;
     }
 
@@ -37,15 +43,13 @@ contract NFT is ERC721URIStorage, Ownable, Pausable {
 
     function mintTo(string memory tokenURI, address recipient) internal returns(uint256) {
         require(balanceOf(recipient) < cappedSupply, "You can't mint anymore.");
-        require(totalSupply < maxSupply, "Max supply reached");
+        require(totalSupply() < maxSupply, "Max supply reached");
 
         _tokenIds.increment();
 
         uint256 newItemId = _tokenIds.current();
-        _mint(recipient, newItemId);
+        _safeMint(recipient, newItemId);
         _setTokenURI(newItemId, tokenURI);
-
-        totalSupply++;
 
         return newItemId;
     }
@@ -57,10 +61,11 @@ contract NFT is ERC721URIStorage, Ownable, Pausable {
     ) internal virtual override {
         super._beforeTokenTransfer(from, to, tokenId);
 
-        require(!paused(), "ERC721Pausable: token transfer while paused");
+        require(from == address(0) || !paused(), "ERC721Pausable: token transfer while paused");
     }
 
+    // withdraw collected minting fee to the beneficiary
     function withDraw() external onlyOwner{
-        payable(owner()).transfer(address(this).balance);
+        payable(beneficiary).transfer(address(this).balance);
     }
 }
