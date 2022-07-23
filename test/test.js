@@ -1,4 +1,4 @@
-const { ethers, waffle } = require("hardhat");
+const { ethers, waffle, upgrades } = require("hardhat");
 
 describe("Extension with Signature", function() {
 
@@ -10,12 +10,24 @@ describe("Extension with Signature", function() {
 
         var nonce = await provider.getTransactionCount(deployer.address);
 
-        const ExtensionWithSignature = await ethers.getContractFactory("ERC721ExtensionSignature");
-        extensionWithSignature = await ExtensionWithSignature.deploy("signature", "sg", 1000, { nonce: nonce++ });
-        await extensionWithSignature.deployed();
+        const nft = await ethers.getContractFactory("NFT");
+        // deploy contracts
+        const proxy = await upgrades.deployProxy(
+            nft, [
+                "Cert NFT", // name
+                "CRT", // symbol
+                100, //capped supply
+                deployer.address // beneficiary
+            ], { nonce: nonce++ }
+        );
+        await proxy.deployed();
+        console.log("NFT: ", proxy.address);
+        // upgrades contracts 
+        // const proxyAddress = "0x62724E7929a2596770278A6422F80841595D4f61";
+        // const proxy = await upgrades.upgradeProxy(proxyAddress, nft);
 
-        var tx = await extensionWithSignature.mint("x", { nonce: nonce++ });
-        await tx.wait();
+        // var tx = await extensionWithSignature.mint("x", { nonce: nonce++ });
+        // await tx.wait();
         console.log(await extensionWithSignature.balanceOf(deployer.address))
     });
 

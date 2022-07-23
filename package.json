@@ -1,14 +1,15 @@
 {
-    "name": "olympus-contracts",
+    "name": "NFT-contracts",
     "version": "1.0.0",
-    "description": "Smart Contracts for Olympus",
+    "description": "Smart Contracts for Cert NFT",
     "directories": {
         "test": "test"
     },
     "dependencies": {
-        "@nomiclabs/hardhat-etherscan": "^2.1.7",
+        "@nomiclabs/hardhat-etherscan": "^3.0.1",
         "@openzeppelin/contracts": "^4.7.0",
         "@openzeppelin/contracts-upgradeable": "^3.4.0",
+        "@openzeppelin/hardhat-upgrades": "^1.19.0",
         "colors": "^1.4.0",
         "dotenv": "^10.0.0"
     },
@@ -30,15 +31,6 @@
         "test": "npx hardhat test",
         "compile": "npx hardhat compile",
         "clean": "npx hardhat clean",
-        "deploy_fantomtest": "npx hardhat run --network fantomtest scripts/1_deploy.ts"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/OlympusDAO/olympus-contracts.git"
-    },
-    "author": "",
-    "bugs": {
-        "url": "https://github.com/OlympusDAO/olympus-contracts/issues"
-    },
-    "homepage": "https://github.com/OlympusDAO/olympus-contracts#readme"
+        "deploy_test": "npx hardhat run --network mumbai scripts/1_deploy.js"
+    }
 }

@@ -1,6 +1,4 @@
-const { ethers, waffle } = require("hardhat");
-const swapAbi = require("../artifacts/contracts/Swap.sol/Swap.json").abi;
-const IERC20 = require("../artifacts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json").abi;
+const { ethers, waffle, upgrades } = require("hardhat");
 
 async function main() {
 
@@ -15,6 +13,19 @@ async function main() {
     var startTIme = new Date().getTime();
 
     console.log("--------------deploy start----------------")
+
+    const nft = await ethers.getContractFactory("NFT");
+    // deploy contracts
+    const proxy = await upgrades.deployProxy(
+        nft, [
+            "Cert NFT", // name
+            "CRT", // symbol
+            100, //capped supply
+            deployer.address // beneficiary
+        ], { nonce: nonce++ }
+    );
+    await proxy.deployed();
+    console.log("NFT: ", proxy.address);
 
     var end = new Date().getTime();
 
