@@ -1,7 +1,7 @@
-require("@nomiclabs/hardhat-ethers");
-require("@openzeppelin/hardhat-upgrades");
+require('dotenv').config();
+require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
-require('dotenv').config()
+require('@openzeppelin/hardhat-upgrades');
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -48,7 +48,7 @@ module.exports = {
             accounts: [process.env.PRIVATEKEY]
         },
         bsctest: {
-            url: "https://speedy-nodes-nyc.moralis.io/89b4f5c6d2fc13792dcaf416/bsc/testnet",
+            url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
             accounts: [process.env.PRIVATEKEY],
         },
         matic: {
@@ -71,7 +71,7 @@ module.exports = {
     etherscan: {
         // Your API key for Etherscan
         // Obtain one at https://etherscan.io/
-        apiKey: "ZJVAXWUVYWWXUB8MHRVPG3W3DWVQJZ4BNS"
+        apiKey: "ECUS9XGPERAY4D5XMM9KE1QZKISJDQESAX"
     },
     solidity: {
         compilers: [{

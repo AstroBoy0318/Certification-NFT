@@ -16,11 +16,10 @@ contract NFT is ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
     uint256 public cappedSupply; // limit of each wallet's nft count
     address public beneficiary; // the wallet which will receive the minting fee
 
-    //properties
-    mapping(uint256=>string) public names;
-
     function initialize(string memory _name, string memory _symbol, uint256 _cappedSupply, address _beneficiary) public initializer {
         __ERC721_init(_name, _symbol);
+        __Ownable_init();
+        __Pausable_init();
         require(_cappedSupply > 0, "Invalid max supply");
         require(_beneficiary != address(0), "Invalid beneficiary");
         cappedSupply = _cappedSupply;
@@ -56,6 +55,10 @@ contract NFT is ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
 
         return newItemId;
     }
+
+    function burn(uint256 tokenId) external {
+        _burn(tokenId);
+    }
     
     function _beforeTokenTransfer(
         address from,
@@ -65,12 +68,6 @@ contract NFT is ERC721Upgradeable, OwnableUpgradeable, PausableUpgradeable {
         super._beforeTokenTransfer(from, to, tokenId);
 
         require(from == address(0) || !paused(), "ERC721Pausable: token transfer while paused");
-    }
-
-    // set name of the token
-    function setName(uint256 tokenId, string memory name) external {
-        require(ownerOf(tokenId) == msg.sender, "You are not the owner.");
-        names[tokenId] = name;
     }
 
     // withdraw collected minting fee to the beneficiary

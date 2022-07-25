@@ -31,6 +31,6 @@
         "test": "npx hardhat test",
         "compile": "npx hardhat compile",
         "clean": "npx hardhat clean",
-        "deploy_test": "npx hardhat run --network mumbai scripts/1_deploy.js"
+        "deploy_test": "npx hardhat run --network bsctest scripts/1_deploy.js"
     }
 }
